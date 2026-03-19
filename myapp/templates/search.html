@@ -1,0 +1,20 @@
+<h2>Search Results</h2>
+
+{% if products %}
+
+    {% for product in products %}
+
+        <div>
+            <h4>{{ product.name }}</h4>
+            <p>₹ {{ product.price }}</p>
+
+            <img src="{{ product.img.url }}" width="150">
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+<p>No product found</p>
+
+{% endif %}

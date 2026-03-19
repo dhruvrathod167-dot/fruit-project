@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout | Place Order</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom Style -->
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+
+        .checkout-title {
+            font-weight: 700;
+        }
+
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        .btn-checkout {
+            padding: 12px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-success" href="{% url 'index' %}">
+                🍎 Fruitables
+            </a>
+            <div class="ms-auto">
+                <a href="{% url 'cart' %}" class="btn btn-outline-success me-2">Cart</a>
+                <a href="{% url 'place_order' %}" class="btn btn-success">Checkout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- TITLE -->
+    <div class="container my-4">
+        <h2 class="text-center checkout-title">Secure Checkout</h2>
+        <p class="text-center text-muted">Review your order & complete purchase</p>
+    </div>
+
+    <!-- CHECKOUT -->
+    <div class="container mb-5">
+        <form method="POST" action="{% url 'place_order' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row g-4">
+
+                <!-- LEFT : BILLING -->
+                <div class="col-lg-7">
+                    <div class="card p-4 shadow-sm">
+                        <h4 class="mb-3">Billing Information</h4>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" name="name" class="form-control" placeholder="Full Name" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <input type="email" name="email" class="form-control" placeholder="Email" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <input type="text" name="mobile" class="form-control" placeholder="Mobile Number"
+                                    required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <input type="text" name="city" class="form-control" placeholder="City" required>
+                            </div>
+
+                            <div class="col-md-12">
+                                <textarea name="address" class="form-control" rows="3" placeholder="Full Address"
+                                    required></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <input type="text" name="pincode" class="form-control" placeholder="Pincode" required>
+                            </div>
+
+                            <div class="col-md-12">
+                                <textarea name="notes" class="form-control" rows="2"
+                                    placeholder="Order Notes (Optional)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT : ORDER SUMMARY -->
+                <div class="col-lg-5">
+                    <div class="card p-4 shadow-sm">
+                        <h4 class="mb-3">Your Order</h4>
+
+
+                        {% for i in cart_items %}
+<div class="d-flex align-items-center mb-3">
+    
+    <img src="{{ i.product.img.url }}" 
+         class="product-img me-3" 
+         style="width:60px; height:60px; object-fit:cover;">
+
+    <div class="flex-grow-1">
+        <h6 class="mb-0">{{ i.product.name }}</h6>
+        <small class="text-muted">
+            ₹{{ i.product.price }} × {{ i.quantity }}
+        </small>
+    </div>
+
+    <strong>₹{{ i.total_price }}</strong>
+</div>
+{% endfor %}
+
+<hr>
+
+<div class="d-flex justify-content-between">
+    <span>Subtotal</span>
+    <strong>₹{{ subtotal }}</strong>
+</div>
+
+<div class="d-flex justify-content-between">
+    <span>Shipping</span>
+    <strong>₹{{ shipping }}</strong>
+</div>
+
+<div class="d-flex justify-content-between mb-3">
+    <span>Total</span>
+    <strong class="text-success">₹{{ total }}</strong>
+</div>
+
+                        <!-- Hidden totals for backend -->
+                        <input type="hidden" name="total" value="{{ total }}">
+                        <input type="hidden" name="subtotal" value="{{ totalprice }}">
+
+                        <!-- PAYMENT -->
+                        <h6>Payment Method</h6>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="payment" value="Cash on Delivery"
+                                checked>
+                            <label class="form-check-label">Cash On Delivery</label>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment" value="UPI / Online">
+                            <label class="form-check-label">UPI / Online</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 btn-checkout">
+                            Place Order
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-white text-center py-3">
+        <small>© 2026 Fruitables | Django E-Commerce Project</small>
+    </footer>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>
